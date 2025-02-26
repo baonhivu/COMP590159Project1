@@ -1,0 +1,15 @@
+.container
+{
+  margin: auto;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+#game
+{
+  margin: auto;
+  border: 1px solid black;
+  width: 300px;
+  height: 150px;
+}
