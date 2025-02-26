@@ -73,10 +73,22 @@ function createModel() {
 // Task 1: Todo - put JS code below.
 // ----------------------------------------------
 
+function startGame() {
+  x_pacman = canvas.width / 2;
+  y_pacman = canvas.height / 2;
 
+  time_index = 0;
+  score = 0;
 
+  pacman_model = new Array();
+  snack_pellets = new Array();
 
+  key = "ArrowRight";
+  paused = true;
 
+  createModel();
+  createSnackPellets();
+}
 
 // ----------------------------------------------
 // Task 2: Todo - modify the JS code below.
@@ -84,20 +96,81 @@ function createModel() {
 document.addEventListener( "keyup", keyEvent );
 
 function keyEvent( event ) {
+  if (key === "s") {
+    startGame();
+  } else if (key === " ") {
+    paused = !paused;
+  }
 
-  
+  if (paused == false) {
+    key = event.key;
+  }
+
+  console.log(key);
 }
-
-
-
-
 
 
 // ----------------------------------------------
 // Task 3: Todo - put JS code below.
 // ----------------------------------------------
 
+function draw() {
+  const screenScore = document.getElementById("score");
+  screenScore.value = score;
 
+  context2d.clearRect(0, 0, canvas.width, canvas.height);
+
+  context2d.fillStyle = "black";
+  context2d.strokeStyle = "black";
+
+  context2d.save();
+
+  for (let i = 0; i <= snack_pellets.length; i++) {
+    if ( hypotenus( ( x_pacman - snack_pellets[i].x ), ( y_pacman - snack_pellets[i].y ) )  <  ( radius/2 ) ) {
+      snack_pellets.splice(i, 1);
+      score += 10;
+    }
+  }
+
+  if (x_pacman >= (canvas.width - radius)) {
+    x_pacman = (canvas.width - radius); 
+  } else if (x_pacman <= (radius)) {
+    x_pacman = radius; 
+  } else if (y_pacman >= radius) {
+    y_pacman = radius; 
+  } else {
+    y_pacman = (canvas.height - radius); 
+  }
+
+  pacman_model.translate(x_pacman, y_pacman);
+
+  if(!paused) {
+    if (key == "ArrowUp") {
+      context2d.rotate(-Math.PI / 2);
+      y_pacman -= displacement;
+    } else if (key == "ArrowDown") {
+      context2d.rotate(Math.PI / 2); 
+      y_pacman += displacement;
+    } else if (key == "ArrowLeft") {
+      context2d.scale(-1, 1);
+      x_pacman -= displacement;
+    } else {
+      context2d.scale(1, 1)
+      x_pacman += displacement;
+    }
+  }
+
+  context2d.fillStyle = "yellow";
+
+  createModel();
+
+  context2d.restore();
+
+  time_index = time_index + 1;
+  if (time_index >= 4) {
+    time_index = 0;
+  };
+}
 
 
 
@@ -107,5 +180,5 @@ function keyEvent( event ) {
 // Task 4: Todo - put JS code below.
 // ----------------------------------------------
 
-
-
+startGame();
+setInterval(draw, 100);
