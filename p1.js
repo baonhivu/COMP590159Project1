@@ -96,17 +96,18 @@ function startGame() {
 document.addEventListener( "keyup", keyEvent );
 
 function keyEvent( event ) {
-  if (key === "s") {
-    startGame();
-  } else if (key === " ") {
+  if (event.key === " ") {
     paused = !paused;
-  }
-
-  if (paused == false) {
+    console.log("Paused = " + paused);
+  } else if (!paused) {
     key = event.key;
+    console.log("Key = " + key)
   }
 
-  console.log(key);
+  if (event.key === "s") {
+    console.log("Starting Game");
+    startGame();
+  }
 }
 
 
@@ -115,9 +116,7 @@ function keyEvent( event ) {
 // ----------------------------------------------
 
 function draw() {
-  const screenScore = document.getElementById("score");
-  screenScore.value = score;
-
+  document.getElementById("score").innerText = score;
   context2d.clearRect(0, 0, canvas.width, canvas.height);
 
   context2d.fillStyle = "black";
@@ -125,51 +124,41 @@ function draw() {
 
   context2d.save();
 
-  for (let i = 0; i <= snack_pellets.length; i++) {
-    if ( hypotenus( ( x_pacman - snack_pellets[i].x ), ( y_pacman - snack_pellets[i].y ) )  <  ( radius/2 ) ) {
+  for (let i = snack_pellets.length-1; i >= 0; i--) {
+    let hypot = hypotenus((snack_pellets[i].x - x_pacman), (snack_pellets[i].y - y_pacman))
+    if (hypot > radius/2) {
+      context2d.fill(snack_pellets[i].circle);
+      context2d.stroke(snack_pellets[i].circle);
+    } else {
       snack_pellets.splice(i, 1);
       score += 10;
     }
   }
 
-  if (x_pacman >= (canvas.width - radius)) {
-    x_pacman = (canvas.width - radius); 
-  } else if (x_pacman <= (radius)) {
-    x_pacman = radius; 
-  } else if (y_pacman >= radius) {
-    y_pacman = radius; 
-  } else {
-    y_pacman = (canvas.height - radius); 
-  }
+  x_pacman = Math.max(Math.min(x_pacman, canvas.width - radius), radius);
+  y_pacman = Math.max(Math.min(y_pacman, canvas.height - radius), radius);
 
-  pacman_model.translate(x_pacman, y_pacman);
+  context2d.translate(x_pacman, y_pacman);
 
-  if(!paused) {
-    if (key == "ArrowUp") {
-      context2d.rotate(-Math.PI / 2);
-      y_pacman -= displacement;
-    } else if (key == "ArrowDown") {
-      context2d.rotate(Math.PI / 2); 
-      y_pacman += displacement;
-    } else if (key == "ArrowLeft") {
-      context2d.scale(-1, 1);
-      x_pacman -= displacement;
-    } else {
-      context2d.scale(1, 1)
-      x_pacman += displacement;
-    }
+  if(key == "ArrowUp"){
+    context2d.rotate(-Math.PI/2);
+    if(!paused) y_pacman -= displacement;
+  } else if(key == "ArrowDown"){
+    context2d.rotate(Math.PI/2);
+    if(!paused) y_pacman += displacement;
+  } else if(key == "ArrowRight"){
+    if(!paused) x_pacman += displacement;
+  } else if(key == "ArrowLeft"){
+    context2d.scale(-1,1);
+    if(!paused) x_pacman -= displacement;
   }
 
   context2d.fillStyle = "yellow";
-
-  createModel();
-
+  context2d.fill(pacman_model[time_index]);
+  context2d.stroke(pacman_model[time_index]);
   context2d.restore();
 
-  time_index = time_index + 1;
-  if (time_index >= 4) {
-    time_index = 0;
-  };
+  time_index = (time_index + 1) % 4;
 }
 
 
