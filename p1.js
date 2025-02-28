@@ -98,14 +98,14 @@ document.addEventListener( "keyup", keyEvent );
 function keyEvent( event ) {
   if (event.key === " ") {
     paused = !paused;
-    console.log("Paused = " + paused);
-  } else if (event.key === " " && !paused) {
+    console.log("paused = " + paused);
+  } else if (!paused && (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowRight" || event.key === "ArrowLeft")) {
     key = event.key;
     console.log("Key = " + key)
   }
 
   if (event.key === "s") {
-    console.log("Starting Game");
+    console.log("starting game");
     startGame();
   }
 }
