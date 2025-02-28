@@ -99,7 +99,7 @@ function keyEvent( event ) {
   if (event.key === " ") {
     paused = !paused;
     console.log("Paused = " + paused);
-  } else if (!paused) {
+  } else if (event.key === " " && !paused) {
     key = event.key;
     console.log("Key = " + key)
   }
